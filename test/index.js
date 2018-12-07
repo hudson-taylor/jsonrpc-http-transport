@@ -1,4 +1,4 @@
-/*global describe, it, before */
+/* global describe, it, before */
 import assert from 'assert';
 import https from 'https';
 import domain from 'domain';
@@ -27,7 +27,7 @@ describe('JSONRPC JSONRPCHTTP Transport', function () {
   describe('Transport', function () {
     it('should create transport instance', function () {
       transport = new JSONRPCHTTP({ port: port, host: host });
-      assert.equal(transport instanceof JSONRPCHTTP, true);
+      assert.strictEqual(transport instanceof JSONRPCHTTP, true);
     });
 
     it('should throw if required arguments are not passed in', function () {
@@ -54,8 +54,8 @@ describe('JSONRPC JSONRPCHTTP Transport', function () {
         host: host
       });
 
-      assert.equal(transport.config.ssl, false);
-      assert.equal(transport.config.path, '/ht-jsonrpc');
+      assert.strictEqual(transport.config.ssl, false);
+      assert.strictEqual(transport.config.path, '/ht-jsonrpc');
 
       transport = new JSONRPCHTTP({
         port: port,
@@ -64,14 +64,14 @@ describe('JSONRPC JSONRPCHTTP Transport', function () {
         path: '/other'
       });
 
-      assert.equal(transport.config.ssl, true);
-      assert.equal(transport.config.path, '/other');
+      assert.strictEqual(transport.config.ssl, true);
+      assert.strictEqual(transport.config.path, '/other');
     });
 
     it('should not require new keyword for creation', function () {
       let transport = JSONRPCHTTP({ port: port, host: host });
 
-      assert.equal(transport instanceof JSONRPCHTTP, true);
+      assert.strictEqual(transport instanceof JSONRPCHTTP, true);
     });
 
     it('should not rquire host & port when app is passed in', function () {
@@ -79,7 +79,7 @@ describe('JSONRPC JSONRPCHTTP Transport', function () {
 
       let transport = JSONRPCHTTP({ app: app });
 
-      assert.equal(transport instanceof JSONRPCHTTP, true);
+      assert.strictEqual(transport instanceof JSONRPCHTTP, true);
     });
   });
 
@@ -88,14 +88,14 @@ describe('JSONRPC JSONRPCHTTP Transport', function () {
 
     it('should have created server', function () {
       server = new transport.Server();
-      assert.equal(server instanceof transport.Server, true);
+      assert.strictEqual(server instanceof transport.Server, true);
     });
 
     it('should start server when listen is called', function (done) {
       server.listen(function (err) {
         assert.ifError(err);
 
-        assert.equal(server.listening, true);
+        assert.strictEqual(server.listening, true);
 
         done();
       });
@@ -112,7 +112,7 @@ describe('JSONRPC JSONRPCHTTP Transport', function () {
       server.stop(function (err) {
         assert.ifError(err);
 
-        assert.equal(server.listening, false);
+        assert.strictEqual(server.listening, false);
 
         done();
       });
@@ -131,8 +131,8 @@ describe('JSONRPC JSONRPCHTTP Transport', function () {
       let _data = { hello: 'world' };
 
       server = new transport.Server(function (method, data, callback) {
-        assert.equal(method, _method);
-        assert.deepEqual(data, _data);
+        assert.strictEqual(method, _method);
+        assert.deepStrictEqual(data, _data);
         callback(null, _data);
       });
 
@@ -145,7 +145,7 @@ describe('JSONRPC JSONRPCHTTP Transport', function () {
           json: { method: _method, params: _data, id: 99, jsonrpc: '2.0' }
         }, function (e, r, body) {
           assert.ifError(e);
-          assert.deepEqual(body.result, _data);
+          assert.deepStrictEqual(body.result, _data);
           server.stop(done);
         });
       });
@@ -168,7 +168,7 @@ describe('JSONRPC JSONRPCHTTP Transport', function () {
         }, function (e, r, body) {
           assert.ifError(e);
 
-          assert.equal(body.error.message, _err);
+          assert.strictEqual(body.error.message, _err);
 
           server.stop(done);
         });
@@ -199,7 +199,7 @@ describe('JSONRPC JSONRPCHTTP Transport', function () {
         return callback(null, data);
       });
 
-      assert.equal(server.config.ssl.cert, SSLKeys.cert);
+      assert.strictEqual(server.config.ssl.cert, SSLKeys.cert);
 
       server.listen(function (err) {
         assert.ifError(err);
@@ -216,7 +216,7 @@ describe('JSONRPC JSONRPCHTTP Transport', function () {
         }, function (e, r, body) {
           assert.ifError(e);
 
-          assert.equal(body.result.hello, _data.hello);
+          assert.strictEqual(body.result.hello, _data.hello);
 
           server.stop(done);
         });
@@ -239,7 +239,7 @@ describe('JSONRPC JSONRPCHTTP Transport', function () {
           json: { method: 'blah', params: 'blah', jsonrpc: '2.0', id: 99 }
         }, function (e, r, body) {
           assert.ifError(e);
-          assert.deepEqual(body.error.message, _errmsg);
+          assert.deepStrictEqual(body.error.message, _errmsg);
           server.stop(done);
         });
       });
@@ -252,12 +252,12 @@ describe('JSONRPC JSONRPCHTTP Transport', function () {
       let transport2 = new JSONRPCHTTP({ app: app, path: '/two' });
 
       let server1 = new transport1.Server(function (method, data, callback) { //eslint-disable-line
-        assert.equal(method, 'method1');
+        assert.strictEqual(method, 'method1');
         return callback(null, data);
       });
 
       let server2 = new transport2.Server(function (method, data, callback) { //eslint-disable-line
-        assert.equal(method, 'method2');
+        assert.strictEqual(method, 'method2');
         return callback(null, data);
       });
 
@@ -270,7 +270,7 @@ describe('JSONRPC JSONRPCHTTP Transport', function () {
           json: { method: 'method1', params: 'method 1', jsonrpc: '2.0', id: 99 }
         }, function (e, r, body) {
           assert.ifError(e);
-          assert.deepEqual(body.result, 'method 1');
+          assert.deepStrictEqual(body.result, 'method 1');
 
           request({
             url: 'http://' + host + ':' + port + '/two',
@@ -278,7 +278,7 @@ describe('JSONRPC JSONRPCHTTP Transport', function () {
             json: { method: 'method2', params: 'method 2', jsonrpc: '2.0', id: 95 }
           }, function (e, r, body2) {
             assert.ifError(e);
-            assert.deepEqual(body2.result, 'method 2');
+            assert.deepStrictEqual(body2.result, 'method 2');
 
             server.close(done);
           });
@@ -313,7 +313,7 @@ describe('JSONRPC JSONRPCHTTP Transport', function () {
   describe('Client', function () {
     it('should have created client', function () {
       let client = new transport.Client();
-      assert.equal(client instanceof transport.Client, true);
+      assert.strictEqual(client instanceof transport.Client, true);
     });
 
     it('should provide noop\'d versions of unused methods', function () {
@@ -336,8 +336,8 @@ describe('JSONRPC JSONRPCHTTP Transport', function () {
         let method = _req$body.method;
         let params = _req$body.params;
 
-        assert.equal(method, _method);
-        assert.deepEqual(params, _data);
+        assert.strictEqual(method, _method);
+        assert.deepStrictEqual(params, _data);
 
         const payload = { jsonrpc: '2.0', id: _req$body.id, result: params };
         res.json(payload);
@@ -348,7 +348,7 @@ describe('JSONRPC JSONRPCHTTP Transport', function () {
       let _server = app.listen(port, host, function () {
         client.call(_method, _data, function (err, response) {
           assert.ifError(err);
-          assert.deepEqual(response, _data);
+          assert.deepStrictEqual(response, _data);
           _server.close(done);
         });
       });
@@ -366,8 +366,8 @@ describe('JSONRPC JSONRPCHTTP Transport', function () {
         let params = _req$body.params;
         let id = _req$body.id;
 
-        assert.equal(method, _method);
-        assert.deepEqual(params, _data);
+        assert.strictEqual(method, _method);
+        assert.deepStrictEqual(params, _data);
 
         const payload = { jsonrpc: '2.0', id, result: params };
         res.json(payload);
@@ -378,7 +378,7 @@ describe('JSONRPC JSONRPCHTTP Transport', function () {
       let _server = app.listen(port, host, function () {
         client.call(_method, _data, function (err, response) {
           assert.ifError(err);
-          assert.deepEqual(response, _data);
+          assert.deepStrictEqual(response, _data);
           _server.close(done);
         });
       });
@@ -405,7 +405,7 @@ describe('JSONRPC JSONRPCHTTP Transport', function () {
 
       let _server = app.listen(port, host, function () {
         client.call(_method, null, function (err) {
-          assert.deepEqual(err.message, _error);
+          assert.deepStrictEqual(err.message, _error);
           _server.close(done);
         });
       });
@@ -417,7 +417,7 @@ describe('JSONRPC JSONRPCHTTP Transport', function () {
       client.config.port = 2000;
 
       client.call('', {}, function (err) {
-        assert.equal(err.substr(0, 20), 'connect ECONNREFUSED');
+        assert.strictEqual(err.substr(0, 20), 'connect ECONNREFUSED');
 
         client.config.port = port;
 
@@ -436,9 +436,9 @@ describe('JSONRPC JSONRPCHTTP Transport', function () {
         let method = _req$body2.method;
         let params = _req$body2.params;
 
-        assert.equal(req.secure, true);
-        assert.equal(method, _method);
-        assert.deepEqual(params, _data);
+        assert.strictEqual(req.secure, true);
+        assert.strictEqual(method, _method);
+        assert.deepStrictEqual(params, _data);
 
         const payload = { jsonrpc: '2.0', id: _req$body2.id, result: params };
         res.json(payload);
@@ -457,7 +457,7 @@ describe('JSONRPC JSONRPCHTTP Transport', function () {
       _app.listen(port, host, function () {
         client.call(_method, _data, function (err, response) {
           assert.ifError(err);
-          assert.deepEqual(response, _data);
+          assert.deepStrictEqual(response, _data);
           _app.close(done);
         });
       });
@@ -476,7 +476,7 @@ describe('JSONRPC JSONRPCHTTP Transport', function () {
 
       let _server = app.listen(port, host, function () {
         client.call('a', 'b', function (err) {
-          assert.equal(err, str);
+          assert.strictEqual(err, str);
           _server.close(done);
         });
       });
@@ -514,7 +514,7 @@ describe('JSONRPC JSONRPCHTTP Transport', function () {
 
       let _server = app.listen(port, host, function () {
         d.on('error', function (err) {
-          assert.equal(err.message, 'unwind');
+          assert.strictEqual(err.message, 'unwind');
           return _server.close(done);
         });
         d.run(function () {
@@ -522,7 +522,7 @@ describe('JSONRPC JSONRPCHTTP Transport', function () {
             hello: 'world'
           }, function (err, response) {
             if (err) {
-              assert.equal(err, undefined, 'err not undefined, stack has unwinded back into Transport');
+              assert.strictEqual(err, undefined, 'err not undefined, stack has unwinded back into Transport');
             }
 
             throw new Error('unwind');

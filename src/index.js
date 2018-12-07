@@ -107,7 +107,7 @@ function JSONRPCHTTPTransportClient (config) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Content-Length': new Buffer(json).length
+        'Content-Length': Buffer.from(json).length
       }
     };
 
